@@ -13,14 +13,26 @@ import {
 } from "../../StyledComponents/HomeStyle/Section1/Icon";
 import SidebarMenuWrapper from "../../StyledComponents/HomeStyle/Section1/SidebarMenuWrapper";
 import SidebarMenu from "../../StyledComponents/HomeStyle/Section1/SidebarMenu";
+import styled from "styled-components";
+
+const FontColor = styled.span`
+  color: ${(props) => (props.color ? props.color : "black")};
+`;
 
 const Section1 = () => {
   return (
-    <SectionContainer size="25">
+    <SectionContainer flex="1">
       <section>
         <WebTitleWrap>
-          <WolfIcon />
-          <WebTitle>Howling</WebTitle>
+          <WebTitle>
+            <FontColor color="#f7dd07">H</FontColor>
+            <FontColor color="#f7dd07">o</FontColor>
+            <FontColor color="#efa517">w</FontColor>
+            <FontColor color="#efa517">l</FontColor>
+            <FontColor color="#ad480c">i</FontColor>
+            <FontColor color="#742c00">n</FontColor>
+            <FontColor>g</FontColor>
+          </WebTitle>
         </WebTitleWrap>
       </section>
       <SidebarMenuWrapper>
@@ -57,3 +69,5 @@ const Section1 = () => {
 };
 
 export default Section1;
+
+//<WolfIcon />
