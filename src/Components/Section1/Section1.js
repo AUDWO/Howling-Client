@@ -14,12 +14,14 @@ import {
 import SidebarMenuWrapper from "../../StyledComponents/HomeStyle/Section1/SidebarMenuWrapper";
 import SidebarMenu from "../../StyledComponents/HomeStyle/Section1/SidebarMenu";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 const FontColor = styled.span`
   color: ${(props) => (props.color ? props.color : "black")};
 `;
 
 const Section1 = () => {
+  const navigate = useNavigate();
   return (
     <SectionContainer flex="1">
       <section>
@@ -28,15 +30,19 @@ const Section1 = () => {
             <FontColor color="#f7dd07">H</FontColor>
             <FontColor color="#f7dd07">o</FontColor>
             <FontColor color="#efa517">w</FontColor>
-            <FontColor color="#efa517">l</FontColor>
-            <FontColor color="#ad480c">i</FontColor>
-            <FontColor color="#742c00">n</FontColor>
+            <FontColor color="#ad480c">l</FontColor>
+            <FontColor color="#742c00">i</FontColor>
+            <FontColor>n</FontColor>
             <FontColor>g</FontColor>
           </WebTitle>
         </WebTitleWrap>
       </section>
       <SidebarMenuWrapper>
-        <SidebarMenu>
+        <SidebarMenu
+          onClick={() => {
+            navigate("/userr");
+          }}
+        >
           <HomeIcon />
           <div>홈</div>
         </SidebarMenu>
@@ -44,7 +50,11 @@ const Section1 = () => {
           <SearchIcon />
           <div>검색</div>
         </SidebarMenu>
-        <SidebarMenu>
+        <SidebarMenu
+          onClick={() => {
+            navigate("/diary");
+          }}
+        >
           <DiaryIcon />
           <div>일기</div>
         </SidebarMenu>
@@ -52,7 +62,11 @@ const Section1 = () => {
           <NewPostIcon />
           <div>만들기</div>
         </SidebarMenu>
-        <SidebarMenu>
+        <SidebarMenu
+          onClick={() => {
+            navigate("/keepdiary");
+          }}
+        >
           <KeepDiary />
           <div>새 일기쓰기</div>
         </SidebarMenu>
