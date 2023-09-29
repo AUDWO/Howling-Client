@@ -12,14 +12,14 @@ const Section2 = () => {
       <PostContentsWrapper>
         <Ss>
           <StoryContentsWrapper>
-            <StoryContent>
+            <MakeStoryContent>
               <StoryProfile>
                 <MakeStoryProfileImg>
                   <PlusIcon />
                 </MakeStoryProfileImg>
                 <StoryProfileName>Howling</StoryProfileName>
               </StoryProfile>
-            </StoryContent>
+            </MakeStoryContent>
             <StoryContent>
               <StoryProfile>
                 <StoryProfileImg></StoryProfileImg>
@@ -98,7 +98,6 @@ const StoryContent = styled.div`
   width: 130px;
   height: 180px;
   border-radius: 20px;
-  background-color: #f7dd07;
   cursor: pointer;
   margin-right: 20px;
   flex-shrink: 0;
@@ -142,6 +141,10 @@ const StoryProfileName = styled.div`
   font-family: "Gothic A1", sans-serif;
   padding: 5px 7px 5px 7px;
   text-align: center;
+`;
+
+const MakeStoryContent = styled(StoryContent)`
+  background-color: #f7dd07;
 `;
 
 const LeftArrowButton = styled.div`
