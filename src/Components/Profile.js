@@ -1,7 +1,8 @@
 import React from "react";
 
-import ProfileImg from "../StyledComponents/HomeStyle/ProfileStyle/ProfileImg";
 import ProfileWrapper from "../StyledComponents/HomeStyle/ProfileStyle/ProfileWrapper";
+
+import { ProfileImg } from "../StyledComponents/HomeStyle/ProfileStyle/ProfileImg";
 
 const Profile = ({ nickname }) => {
   return (

@@ -10,9 +10,12 @@ import SignUp from "./Views/SignUp";
 import Diary from "./Views/Diary";
 import MoreDiary from "./Views/MoreDiary";
 import KeepDiary from "./Views/KeepDiary";
+import CopyKeepDiary from "./Views/CopyKeep";
 
 // CSS Components
 import GlobalStyles from "./StyledComponents/GlobalStyles";
+import Keep2Diary from "./Views/Keep2Diary";
+import MoreStory from "./Views/MoreStory";
 function App() {
   return (
     <BrowserRouter>
@@ -27,6 +30,9 @@ function App() {
         <Route path="/diary" element={<Diary />} />
         <Route path="/morediary" element={<MoreDiary />} />
         <Route path="/keepdiary" element={<KeepDiary />} />
+        <Route path="/keep2diary" element={<Keep2Diary />} />
+        <Route path="/copykeepdiary" element={<CopyKeepDiary />} />
+        <Route path="/morestory" element={<MoreStory />} />
       </Routes>
     </BrowserRouter>
   );

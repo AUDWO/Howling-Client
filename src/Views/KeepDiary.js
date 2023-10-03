@@ -14,10 +14,12 @@ import {
   DiaryNav,
 } from "../StyledComponents/DiaryStyle/Diary";
 
-import { BiLockOpenAlt } from "react-icons/bi";
-import { BiLockAlt } from "react-icons/bi";
-import { TbPhotoCheck } from "react-icons/tb";
-import { TbPhotoCancel } from "react-icons/tb";
+import {
+  LockIcon,
+  LockOpenIcon,
+  LockOpenPhotoIcon,
+  LockPhotoIcon,
+} from "../StyledComponents/DiaryStyle/DiaryIcon";
 
 const KeepDiary = () => {
   const textareaRef = useRef(null);
@@ -139,24 +141,4 @@ const PublicOption = styled.div`
 const RadioButtom = styled.input`
   width: 15px;
   height: 15px;
-`;
-
-const LockOpenIcon = styled(BiLockOpenAlt)`
-  margin-left: 10px;
-  margin-right: 5px;
-`;
-
-const LockIcon = styled(BiLockAlt)`
-  margin-left: 10px;
-  margin-right: 5px;
-`;
-
-const LockOpenPhotoIcon = styled(TbPhotoCheck)`
-  margin-left: 10px;
-  margin-right: 5px;
-`;
-
-const LockPhotoIcon = styled(TbPhotoCancel)`
-  margin-left: 10px;
-  margin-right: 5px;
 `;

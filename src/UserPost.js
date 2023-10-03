@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import axios from "axios";
+import styled from "styled-components";
 
 const UserPost = () => {
   const [text, setText] = useState("");
@@ -55,8 +56,14 @@ const UserPost = () => {
           <input value="" type="hidden" name="url" ref={imgUrlRef} />
         </div>
         <div>
-          <label HtmlFor="img">사진 업로드</label>
-          <input type="file" accept="image/*" onChange={onUpload} />
+          <label htmlFor="imgg">사진 업로드</label>
+          <ImgInput
+            id="imgg"
+            type="file"
+            accept="image/*"
+            name="imgg"
+            onChange={onUpload}
+          />
 
           <button type="submit">howling</button>
         </div>
@@ -66,3 +73,7 @@ const UserPost = () => {
 };
 
 export default UserPost;
+
+const ImgInput = styled.input`
+  display: none;
+`;

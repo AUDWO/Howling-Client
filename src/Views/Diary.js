@@ -41,6 +41,7 @@ const Div = styled.div``;
 const Dd = styled.div`
   height: 100%;
   display: flex;
+  flex: 1;
   flex-direction: column;
 `;
 

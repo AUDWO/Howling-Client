@@ -5,7 +5,7 @@ import Trend from "./Trend";
 
 const Section3 = () => {
   return (
-    <SectionContainer flex="1">
+    <SectionContainer width={"340px"}>
       <section>
         <User />
         <Trend />

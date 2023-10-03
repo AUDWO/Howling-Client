@@ -7,8 +7,9 @@ import { FaRegComment } from "react-icons/fa";
 import { IoReorderThreeSharp } from "react-icons/io5";
 import Profile from "../../../Components/Profile";
 import ProfileWrapper from "../ProfileStyle/ProfileWrapper";
-
-import { Bb } from "../../../Posting";
+import { AiOutlineHeart } from "react-icons/ai";
+import { AiFillHeart } from "react-icons/ai";
+import { CommentModalWrapper } from "../../../Posting";
 
 let fontSize35 = css`
   font-size: 25px;
@@ -28,9 +29,18 @@ let marginB60 = css`
 let marginT60 = css`
   margin-top: 60px;
 `;
+
+let marginT15 = css`
+  margin-top: 15px;
+`;
 let marginT30 = css`
   margin-top: 30px;
 `;
+
+let marginB15 = css`
+  margin-bottom: 15px;
+`;
+
 let marginB30 = css`
   margin-bottom: 30px;
 `;
@@ -45,8 +55,12 @@ export const ProfileIcon = styled(Profile)`
   }
 `;
 export const CommentIcon = styled(FaRegComment)`
-  ${marginB60};
+  margin-left: 15px;
   ${fontSize25};
+  &:hover {
+    color: #f7dd07;
+  }
+  cursor: pointer;
 `;
 
 export const DownArrowIcon = styled(BiDownArrow)`
@@ -68,5 +82,19 @@ export const UpArrowIcon = styled(BiUpArrow)`
 `;
 
 export const MoreIcon = styled(IoReorderThreeSharp)`
+  margin-left: 15px;
   ${fontSize35}
+`;
+
+export const LikeIcon = styled(AiOutlineHeart)`
+  margin-left: 15px;
+  ${fontSize35};
+  cursor: pointer;
+`;
+
+export const LikeFillIcon = styled(AiFillHeart)`
+  margin-left: 15px;
+  ${fontSize35};
+  color: #f7dd07;
+  cursor: pointer;
 `;

@@ -23,17 +23,17 @@ const FontColor = styled.span`
 const Section1 = () => {
   const navigate = useNavigate();
   return (
-    <SectionContainer flex="1">
+    <SectionContainer width={"340px"}>
       <section>
         <WebTitleWrap>
           <WebTitle>
             <FontColor color="#f7dd07">H</FontColor>
-            <FontColor color="#f7dd07">o</FontColor>
-            <FontColor color="#efa517">w</FontColor>
-            <FontColor color="#ad480c">l</FontColor>
-            <FontColor color="#742c00">i</FontColor>
-            <FontColor>n</FontColor>
-            <FontColor>g</FontColor>
+            <FontColor color="#f7dd07">O</FontColor>
+            <FontColor color="#efa517">W</FontColor>
+            <FontColor color="#ad480c">L</FontColor>
+            <FontColor color="#742c00">I</FontColor>
+            <FontColor color="#742c00">N</FontColor>
+            <FontColor>G</FontColor>
           </WebTitle>
         </WebTitleWrap>
       </section>
@@ -64,7 +64,7 @@ const Section1 = () => {
         </SidebarMenu>
         <SidebarMenu
           onClick={() => {
-            navigate("/keepdiary");
+            navigate("/copykeepdiary");
           }}
         >
           <KeepDiary />
