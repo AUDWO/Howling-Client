@@ -6,18 +6,14 @@ export const DiaryAdvanceSetupWrapper = styled.div`
   margin-top: 20px;
 `;
 
-export const DiaryOptionImg = styled.div`
+const DiaryOption = styled.div`
   width: 500px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 20px;
+  font-size: 17px;
 `;
 
-export const DiaryOptionPublic = styled.div`
-  width: 500px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 20px;
-`;
+export const DiaryOptionImg = styled(DiaryOption)``;
+
+export const DiaryOptionPublic = styled(DiaryOption)``;
