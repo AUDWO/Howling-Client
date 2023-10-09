@@ -1,6 +1,12 @@
 import styled from "styled-components";
 import { BsDot } from "react-icons/bs";
 
+export const MoreStoryWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+`;
 export const MoreStoryInfo = styled.div`
   display: flex;
   flex-direction: column;
@@ -14,12 +20,6 @@ export const MoreStoryContent = styled.div`
   line-height: 1.7;
   margin-top: 30px;
   margin-bottom: 40px;
-`;
-
-export const MoreStoryWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
 `;
 
 export const MoreStoryContentDiv = styled.div`
