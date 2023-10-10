@@ -1,6 +1,11 @@
 import styled from "styled-components";
 import { AiOutlineClose } from "react-icons/ai";
 
+export const CommentsWrapper = styled.div`
+  height: 470px;
+  overflow-y: scroll;
+`;
+
 export const CommentModalWrapper = styled.div`
   box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);
   background-color: #f8f9fa;
@@ -35,7 +40,8 @@ export const CommentTitle = styled.div`
 
 export const CommentWrapper = styled.div`
   width: 100%;
-  height: 120px;
-  border: 1px solid red;
+  min-height: 120px;
+  height: auto;
   padding: 10px;
+  margin-bottom: 10px;
 `;
