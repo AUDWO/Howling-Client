@@ -1,37 +1,103 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
+import axios from "axios";
 
-import DragDownImgCp from "./DragDownImgCp";
+import MakePostDragDownImgCp from "./MakePostDragDownImgCp";
 import PostAdvancedSetupCp from "./PostAdvancedSetupCp";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import postImgAtom from "../../store/PostImgAtom";
+import ModalOpenAtom from "../../store/ModalOpenAtom";
 
 const MakePostModalCp = () => {
-  const [text, setText] = useState(false);
+  const setMakePostModalOpen = useSetRecoilState(
+    ModalOpenAtom("makePostModal")
+  );
+
+  const imgUrl = useRecoilValue(postImgAtom);
+  const postModalBackground = useRef();
+  const [textCheck, setTextCheck] = useState(true);
+  const [text, setText] = useState(null);
+  const [title, setTitle] = useState(null);
+  const [likeCountControl, setLikeCountControl] = useState(true);
+  const [commentControl, setCommentControl] = useState(true);
+  const [contentControl, setContentControl] = useState(true);
+
+  const formData = new FormData();
+  formData.append("img", imgUrl);
+
+  const postImgUpload = async (e) => {
+    e.preventDefault();
+
+    if (imgUrl && formData) {
+      const response = await axios.post(
+        "http://localhost:8005/post/img",
+        formData
+      );
+
+      await axios.post("http://localhost:8005/post", {
+        url: response.data.url,
+        content: text,
+        title: title,
+        likeCountControl: likeCountControl,
+        commentControl: commentControl,
+        contentControl: contentControl,
+        likeCount: 0,
+        commentCount: 0,
+      });
+    }
+  };
+
   return (
-    <MakeStoryModal>
-      <MakeStoryWrapper>
-        <MakeStoryProfileWrapper>
-          <MakeStoryProfileImg></MakeStoryProfileImg>
-          <MakeStoryNickname>myeongjae_7053</MakeStoryNickname>
-        </MakeStoryProfileWrapper>
-        <DragDownImgCp />
+    <MakePostModal
+      ref={postModalBackground}
+      onClick={(e) => {
+        if (e.target === postModalBackground.current) {
+          setMakePostModalOpen(false);
+        }
+      }}
+    >
+      <MakePostWrapper>
+        <MakePostProfileWrapper>
+          <MakePostProfileImg></MakePostProfileImg>
+          <MakePostNickname>myeongjae_7053</MakePostNickname>
+        </MakePostProfileWrapper>
+        <MakePostDragDownImgCp />
         <div>
-          <MakePostTitle placeholder="제목을 입력하세요" />
+          <MakePostTitle
+            placeholder="제목을 입력하세요"
+            value={title}
+            onChange={(e) => {
+              setTitle(e.target.value);
+            }}
+          />
         </div>
-        <MakeStoryContentWrapper>
-          <MakeStoryContent placeholder="내용을 입력하세요!" />
-        </MakeStoryContentWrapper>
+        {textCheck && (
+          <MakePostContentWrapper>
+            <MakePostContent
+              placeholder="내용을 입력하세요!"
+              value={text}
+              onChange={(e) => {
+                setText(e.target.value);
+              }}
+            />
+          </MakePostContentWrapper>
+        )}
         <MakePostOptionWrapper>
           <PostAdvancedSetupCp />
         </MakePostOptionWrapper>
-        <MakeStoryFormWrapper>
-          <MakeStoryButton>게시하기</MakeStoryButton>
-          <MakeStoryCancelButton>삭제하기</MakeStoryCancelButton>
-        </MakeStoryFormWrapper>
+        <MakePostFormWrapper
+          onSubmit={(e) => {
+            postImgUpload(e);
+          }}
+        >
+          <MakePostButton type="submit">게시하기</MakePostButton>
+          <MakePostCancelButton>삭제하기</MakePostCancelButton>
+        </MakePostFormWrapper>
         <div>
-          <Dd></Dd>
+          <EmptySpace></EmptySpace>
         </div>
-      </MakeStoryWrapper>
-    </MakeStoryModal>
+      </MakePostWrapper>
+    </MakePostModal>
   );
 };
 
@@ -44,11 +110,12 @@ export const MakePostOptionWrapper = styled.div`
   justify-content: center;
   width: 100%;
   height: 250px;
+  margin-top: 60px;
 `;
 
 //----
 
-export const Dd = styled.div`
+export const EmptySpace = styled.div`
   width: 200px;
   height: 100px;
 `;
@@ -64,7 +131,7 @@ export const MakePostTitle = styled.input`
 `;
 
 //-----
-const MakeStoryModal = styled.div`
+const MakePostModal = styled.div`
   position: fixed;
   z-index: 17;
   width: 100%;
@@ -75,7 +142,7 @@ const MakeStoryModal = styled.div`
   justify-content: center;
 `;
 
-const MakeStoryWrapper = styled.div`
+const MakePostWrapper = styled.div`
   display: flex;
   flex-direction: column;
   z-index: 20;
@@ -87,7 +154,7 @@ const MakeStoryWrapper = styled.div`
   opacity: 1;
 `;
 
-export const MakeStoryImgWrapper = styled.div`
+export const MakePostImgWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -95,9 +162,9 @@ export const MakeStoryImgWrapper = styled.div`
   height: 100%;
 `;
 
-export const MakeStoryImgSelectWrapper = styled.div``;
+export const MakePostImgSelectWrapper = styled.div``;
 
-export const MakeStoryImgFormWrapper = styled.form`
+export const MakePostImgFormWrapper = styled.form`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -105,7 +172,7 @@ export const MakeStoryImgFormWrapper = styled.form`
   height: 100px;
 `;
 
-export const MakeStoryImgSelectButton = styled.label`
+export const MakePostImgSelectButton = styled.label`
   font-size: 15px;
   font-weight: 600;
   height: 45px;
@@ -121,17 +188,17 @@ export const MakeStoryImgSelectButton = styled.label`
   cursor: pointer;
 `;
 
-export const MakeStoryImgInput = styled.input``;
+export const MakePostImgInput = styled.input``;
 
-export const MakeStoryImg = styled.img``;
+export const MakePostImg = styled.img``;
 
-export const MakeStoryContentWrapper = styled.div`
+export const MakePostContentWrapper = styled.div`
   border-bottom: 1px solid #bbbbbb;
   width: 100%;
   height: auto;
 `;
 
-export const MakeStoryProfileWrapper = styled.div`
+export const MakePostProfileWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -140,7 +207,7 @@ export const MakeStoryProfileWrapper = styled.div`
   padding: 10px;
 `;
 
-export const MakeStoryProfileImg = styled.img`
+export const MakePostProfileImg = styled.img`
   background-color: black;
   border-radius: 50%;
   width: 50px;
@@ -148,12 +215,12 @@ export const MakeStoryProfileImg = styled.img`
   margin-right: 15px;
 `;
 
-export const MakeStoryNickname = styled.div`
+export const MakePostNickname = styled.div`
   font-size: 16px;
   font-weight: 600;
 `;
 
-export const MakeStoryContent = styled.textarea`
+export const MakePostContent = styled.textarea`
   width: 100%;
   height: 200px;
   border: none;
@@ -164,7 +231,7 @@ export const MakeStoryContent = styled.textarea`
   resize: none;
 `;
 
-export const MakeStoryFormWrapper = styled.form`
+export const MakePostFormWrapper = styled.form`
   margin-top: 70px;
   display: flex;
   justify-content: space-around;
@@ -177,10 +244,10 @@ export const Button = styled.button`
   border-radius: 7px;
 `;
 
-export const MakeStoryButton = styled(Button)`
+export const MakePostButton = styled(Button)`
   color: black;
 `;
 
-export const MakeStoryCancelButton = styled(Button)`
+export const MakePostCancelButton = styled(Button)`
   color: #ed203d;
 `;
