@@ -1,16 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import { RxCross1 } from "react-icons/rx";
 import postImgAtom from "../../store/PostImgAtom";
 import { useRecoilState } from "recoil";
 
 function MakePostDragDownImgCp() {
-  const [imgUrl, setImgUrl] = useRecoilState(postImgAtom);
+  const [imgUrlData, setImgUrlData] = useRecoilState(postImgAtom);
 
-  function handleFileSelect(event) {
-    const selectedFile = event.target.files[0];
-    if (selectedFile && selectedFile.type.startsWith("image/")) {
-      setImgUrl(selectedFile);
+  function handleFileSelect(e) {
+    e.preventDefault();
+    const selectedImgUrl = e.target.files[0];
+    console.log(selectedImgUrl);
+    if (selectedImgUrl && selectedImgUrl.type.startsWith("image/")) {
+      setImgUrlData(selectedImgUrl);
     }
   }
 
@@ -20,9 +22,9 @@ function MakePostDragDownImgCp() {
 
   const handleDrop = (e) => {
     e.preventDefault();
-    const url = e.dataTransfer.files[0];
-    if (url && url.type.startsWith("image/")) {
-      setImgUrl(url);
+    const selectedImgUrl = e.dataTransfer.files[0];
+    if (selectedImgUrl && selectedImgUrl.type.startsWith("image/")) {
+      setImgUrlData(selectedImgUrl);
     }
   };
 
@@ -32,15 +34,15 @@ function MakePostDragDownImgCp() {
         onDragOver={handleDragOver}
         onDrop={handleDrop}
       >
-        {imgUrl ? (
+        {imgUrlData ? (
           <ImgWrapper>
             <DragDownImg
-              src={URL.createObjectURL(imgUrl)}
+              src={URL.createObjectURL(imgUrlData)}
               alt="Dropped"
             ></DragDownImg>
             <DragDownImgCancelButton
               onClick={() => {
-                setImgUrl(null);
+                setImgUrlData(null);
               }}
             />
           </ImgWrapper>
