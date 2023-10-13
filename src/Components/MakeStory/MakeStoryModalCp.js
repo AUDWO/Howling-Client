@@ -1,12 +1,16 @@
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 import MakeStoryImgCp from "./MakeStoryImgCp";
 import MakeStoryContentCp from "./MakeStoryContentCp";
+import ModalOpenAtom from "../../store/ModalOpenAtom";
 import {
   MakeStoryWrapper,
   MakeStoryModal,
 } from "../../StyledComponents/MakeStoryStyle/MakeStoryModalCpStyle";
+import { useSetRecoilState } from "recoil";
 const MakeStoryModalCp = () => {
-  const [makeStoryModalOpen, setMakeStoryModalOpen] = useState(true);
+  const setMakeStoryModalOpen = useSetRecoilState(
+    ModalOpenAtom("makeStoryModal")
+  );
 
   const storyModalBackground = useRef();
   return (
