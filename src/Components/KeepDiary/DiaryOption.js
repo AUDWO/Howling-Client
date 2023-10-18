@@ -14,7 +14,7 @@ import { useRecoilValue } from "recoil";
 
 const DiaryOptionComponent = () => {
   const toggleImgValue = useRecoilValue(toggleValueAtom("Img"));
-  const togglePublicValue = useRecoilValue(toggleValueAtom("Public"));
+  const togglePublicValue = useRecoilValue(toggleValueAtom("public"));
 
   return (
     <DiaryAdvanceSetupWrapper>
@@ -27,7 +27,7 @@ const DiaryOptionComponent = () => {
         공개
         <ToggleSwitchButtonComponent
           inputId={"togglePublic"}
-          atomName={"Public"}
+          atomName={"public"}
         />
       </DiaryOptionPublic>
       {togglePublicValue && <DiaryAdvancedSetupComponent />}

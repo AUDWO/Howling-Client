@@ -7,31 +7,28 @@ import {
   DiaryImgButton,
   DiaryImgInput,
   DiaryImgCancelButton,
+  DiaryImg,
+  DiaryImgDiv,
 } from "../../StyledComponents/KeepDiaryStyle/DiaryImgSelect";
+import { useRecoilState } from "recoil";
+import imgUrlAtom from "../../store/imgUrlAtom";
 
 const DiaryImgSelectComponent = () => {
-  const [imgUrl, setImgUrl] = useState();
-  const [text, setText] = useState("");
+  const [imgUrlData, setImgUrlData] = useRecoilState(imgUrlAtom("diaryImg"));
+
   const imgUrlRef = useRef();
   const imgPreviewRef = useRef();
 
   const onUpload = (e) => {
     e.preventDefault();
-    const formData = new FormData();
 
-    formData.append("img", e.target.files[0]);
-    axios
-      .post("/post/img", formData)
-      .then((res) => {
-        imgUrlRef.current.value = res.data.url;
-        imgPreviewRef.current.src = res.data.url;
-        setImgUrl(res.data.url);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    const selectedImg = e.target.files[0];
+    setImgUrlData(selectedImg);
   };
 
+  console.log(imgUrlData);
+  console.log("000");
+  /*
   const imgUpload = async (e) => {
     e.preventDefault();
     await axios.post("http://localhost:8005/post", {
@@ -39,21 +36,17 @@ const DiaryImgSelectComponent = () => {
       url: imgUrl,
     });
   };
-
+*/
   return (
     <div>
-      <DiaryImgForm
-        onSubmit={(e) => {
-          imgUpload(e);
-        }}
-      >
+      <DiaryImgForm>
         <DiaryImgButtonWrapper>
-          <DiaryImgButton htmlFor="imgg">사진 선택</DiaryImgButton>
+          <DiaryImgButton htmlFor="diaryImg">사진 선택</DiaryImgButton>
           <DiaryImgInput
-            id="imgg"
+            id="diaryImg"
             type="file"
             accept="image/*"
-            name="imgg"
+            name="diaryImg"
             onChange={onUpload}
           />
           <DiaryImgCancelButton>삭제하기</DiaryImgCancelButton>
@@ -61,11 +54,24 @@ const DiaryImgSelectComponent = () => {
       </DiaryImgForm>
 
       <DiaryImgWrapper>
-        <div>
-          <img id="image-preview" src="" alt="미리보기" ref={imgPreviewRef} />
+        <DiaryImgDiv>
+          {imgUrlData && (
+            <DiaryImg
+              id="image-preview"
+              src={URL.createObjectURL(imgUrlData)}
+              alt="미리보기"
+              ref={imgPreviewRef}
+            />
+          )}
 
-          <input value="" type="hidden" name="url" ref={imgUrlRef} />
-        </div>
+          <input
+            value=""
+            type="hidden"
+            name="url"
+            ref={imgUrlRef}
+            onChange={setImgUrlData}
+          />
+        </DiaryImgDiv>
       </DiaryImgWrapper>
     </div>
   );

@@ -5,11 +5,25 @@ import {
   ToggleAbleButton,
   ToggleAbleSwitch,
 } from "../../StyledComponents/KeepDiaryStyle/ToggleAbleSwitchButton";
+import toggleValueAtom from "../../store/ToggleValueAtom";
+import { useRecoilState } from "recoil";
 
-const ToggleAbleSwitchComponent = ({ inputId }) => {
+const ToggleAbleSwitchComponent = ({ inputId, atomName }) => {
+  const [toggleValue, setToggleValue] = useRecoilState(
+    toggleValueAtom(`${atomName}`)
+  );
+
+  console.log(toggleValue);
+
   return (
     <>
-      <AbleCheckbox id={inputId} type="checkbox" hidden />
+      <AbleCheckbox
+        id={inputId}
+        type="checkbox"
+        hidden
+        checked={toggleValue}
+        onChange={() => setToggleValue(!toggleValue)}
+      />
       <ToggleAbleSwitch htmlFor={inputId}>
         <ToggleAbleButton></ToggleAbleButton>
       </ToggleAbleSwitch>

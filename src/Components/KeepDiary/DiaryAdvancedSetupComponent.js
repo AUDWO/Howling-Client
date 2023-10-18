@@ -1,31 +1,35 @@
 import React from "react";
 import {
-  Ooption,
+  Option,
   ToggleAbleButtonWrapper,
-  LikeCountAbleButtonTitle,
-  HitsAbleButtonTitle,
-  CommentsAbleButtonTtile,
+  AbleButtonTitle,
 } from "../../StyledComponents/KeepDiaryStyle/DiaryAdvancedSetupComponent";
 
 import ToggleAbleSwitchComponent from "./ToggleAbleSwitchComponent";
 
-const DiaryAdvancedSetupComponent = () => {
+const DiaryAdvancedSetupCp = () => {
   return (
-    <Ooption>
+    <Option>
       <ToggleAbleButtonWrapper>
-        <LikeCountAbleButtonTitle>좋아요 수 기능</LikeCountAbleButtonTitle>
-        <ToggleAbleSwitchComponent inputId={"likeCount"} />
+        <AbleButtonTitle>좋아요 수 기능 해제</AbleButtonTitle>
+        <ToggleAbleSwitchComponent
+          inputId={"likeCount"}
+          atomName={"diaryLike"}
+        />
       </ToggleAbleButtonWrapper>
       <ToggleAbleButtonWrapper>
-        <HitsAbleButtonTitle>조회수 기능</HitsAbleButtonTitle>
-        <ToggleAbleSwitchComponent inputId={"hits"} />
+        <AbleButtonTitle>조회수 기능 해제</AbleButtonTitle>
+        <ToggleAbleSwitchComponent inputId={"hits"} atomName={"diaryView"} />
       </ToggleAbleButtonWrapper>
       <ToggleAbleButtonWrapper>
-        <CommentsAbleButtonTtile>댓글 기능</CommentsAbleButtonTtile>
-        <ToggleAbleSwitchComponent inputId={"Comments"} />
+        <AbleButtonTitle>댓글 기능 해제</AbleButtonTitle>
+        <ToggleAbleSwitchComponent
+          inputId={"Comments"}
+          atomName={"diartComment"}
+        />
       </ToggleAbleButtonWrapper>
-    </Ooption>
+    </Option>
   );
 };
 
-export default DiaryAdvancedSetupComponent;
+export default DiaryAdvancedSetupCp;

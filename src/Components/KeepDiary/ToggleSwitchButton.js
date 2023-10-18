@@ -13,6 +13,7 @@ const ToggleSwitchButtonComponent = ({ inputId, atomName }) => {
   const [toggleValue, setToggleValue] = useRecoilState(
     toggleValueAtom(atomName)
   );
+
   return (
     <ToggleSwitchWrapper>
       <Checkbox
