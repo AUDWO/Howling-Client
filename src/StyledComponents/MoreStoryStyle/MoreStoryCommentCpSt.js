@@ -58,9 +58,15 @@ export const MoreStoryCommentInput = styled.textarea`
   background-color: #e8e8e8;
 `;
 
+export const StoryCommentPostButton = styled.div`
+  font-size: 15px;
+  color: ${(props) => (props.comment ? "black" : "#c7c7c8")};
+  cursor: pointer;
+`;
+
 export const MoreStoryComment = styled.div`
   display: flex;
-  width: 100%;
+  width: 610px;
   min-height: 120px;
   height: auto;
   padding: 25px 15px 10px 15px;
@@ -80,7 +86,9 @@ export const MoreStoryCommentProfile = styled.div`
   margin-right: 20px;
 `;
 
-export const CommentWrapper = styled.div``;
+export const CommentWrapper = styled.div`
+  width: 100%;
+`;
 
 export const ProfileInfoWrapper = styled.div`
   display: flex;

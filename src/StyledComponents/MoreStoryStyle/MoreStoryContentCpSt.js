@@ -68,6 +68,12 @@ export const MoreStoryTimepassDot = styled(BsDot)``;
 
 export const MoreStoyrImgWrapper = styled.div`
   width: 100%;
-  height: 600px;
+  height: 800px;
   background-color: black;
+`;
+
+export const MoreStoryImg = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 `;
