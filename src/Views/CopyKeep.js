@@ -38,20 +38,8 @@ const CopyKeepDiary = () => {
     try {
       const response = await axios.post("/post/diaryimg", formData);
 
-      console.log(formData);
-      console.log("formData");
-      console.log({
-        img: response.data.url,
-        viewCheck: viewCheck,
-        likeCheck: likeCheck,
-        commentCheck: commentCheck,
-        publicCheck: publicCheck,
-        content: content,
-        title: title,
-      });
-
       const response2 = await axios.post("/post/diary", {
-        img: response.data.url,
+        url: response.data.url,
         viewCheck: viewCheck,
         likeCheck: likeCheck,
         commentCheck: commentCheck,
