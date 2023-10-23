@@ -2,12 +2,11 @@ import React from "react";
 import DiaryPostImg from "./DiaryPostImg";
 import DiaryPostInfo from "./DiaryPostInfo";
 import { DiaryPostWrapper } from "../../StyledComponents/DiaryStyle/DiaryPost";
-import Profile from "../Profile";
-const DiaryPost = () => {
+const DiaryPost = ({ diary }) => {
   return (
     <DiaryPostWrapper>
-      <DiaryPostImg />
-      <DiaryPostInfo />
+      <DiaryPostImg diaryImg={diary.img} />
+      <DiaryPostInfo diaryInfo={diary} />
     </DiaryPostWrapper>
   );
 };

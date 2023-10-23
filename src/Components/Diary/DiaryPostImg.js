@@ -1,8 +1,15 @@
 import React from "react";
-import { DiaryPostImgWrapper } from "../../StyledComponents/DiaryStyle/DiaryPost";
+import {
+  DiaryPostImgWrapper,
+  DiaryImg,
+} from "../../StyledComponents/DiaryStyle/DiaryPost";
 
-const DiaryPostImg = () => {
-  return <DiaryPostImgWrapper></DiaryPostImgWrapper>;
+const DiaryPostImg = ({ diaryImg }) => {
+  return (
+    <DiaryPostImgWrapper>
+      <DiaryImg src={diaryImg} />
+    </DiaryPostImgWrapper>
+  );
 };
 
 export default DiaryPostImg;

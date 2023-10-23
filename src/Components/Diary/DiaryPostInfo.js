@@ -5,15 +5,22 @@ import {
   DiaryPostDate,
   DiaryPostTitleWrapper,
   DiaryPostUserWrapper,
+  UserProfileWrapper,
+  UserNickname,
 } from "../../StyledComponents/DiaryStyle/DiaryPost";
 
-const DiaryPostInfo = () => {
+const DiaryPostInfo = ({ diaryInfo }) => {
+  const dateObject = new Date(diaryInfo.createdAt);
+  const year = dateObject.getUTCFullYear();
+  const month = dateObject.getUTCMonth() + 1; // 월은 0부터 시작하므로 +1 해줍니다.
+  const day = dateObject.getUTCDate();
   return (
     <DiaryPostInfoWrapper>
-      <DiaryPostDate>2023.09.19</DiaryPostDate>
-      <DiaryPostTitleWrapper>llblvptle clbp kcpwl</DiaryPostTitleWrapper>
+      <DiaryPostDate>{`${year}-${month}-${day}`}</DiaryPostDate>
+      <DiaryPostTitleWrapper>{diaryInfo.title}</DiaryPostTitleWrapper>
       <DiaryPostUserWrapper>
-        <Profile />
+        <UserProfileWrapper></UserProfileWrapper>
+        <UserNickname>{diaryInfo.User.nickname}</UserNickname>
       </DiaryPostUserWrapper>
     </DiaryPostInfoWrapper>
   );
