@@ -1,35 +1,152 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
+import userInfoAtom from "../../store/userState/userAtom";
+import axios from "axios";
 
-const ProfileInfoCp = () => {
-  return (
-    <ProfileInfoWrapper>
-      <ProfileEditWrapper>
-        <ProfileEditButton>프로필 편집</ProfileEditButton>
-      </ProfileEditWrapper>
-      <ProfileNmaeWrapper>
-        <ProfileNickname>myeongjae_7053</ProfileNickname>
-      </ProfileNmaeWrapper>
-      <ProfileName>김명재</ProfileName>
-      <ProfileJoinedWrapper>
-        <ProfileJoinedTitle>Joined</ProfileJoinedTitle>
-        <ProfileJoineDate>2023.04.05</ProfileJoineDate>
-      </ProfileJoinedWrapper>
-      <FollowCountWrapper>
-        <FollowerWrapper>
-          <FollowerTitle>팔로워</FollowerTitle>
-          <FollowerCountNumber>142</FollowerCountNumber>
-        </FollowerWrapper>
-        <FollowingWrapper>
-          <FollowingTitle>팔로우</FollowingTitle>
-          <FolloiwngCountNumber>122</FolloiwngCountNumber>
-        </FollowingWrapper>
-      </FollowCountWrapper>
-    </ProfileInfoWrapper>
-  );
+const ProfileInfoCp = ({ userId }) => {
+  const userInfo = useRecoilValue(userInfoAtom);
+
+  const [a, setA] = useState("");
+  console.log("123456789");
+  console.log(userInfo);
+  console.log("123456789");
+  const [otherUserInfo, setOtherUserInfo] = useState({});
+  const [checkFollower, setCheckFollower] = useState(false);
+
+  const handleDate = (obj) => {
+    const dateObject = new Date(obj.createdAt);
+    const year = dateObject.getUTCFullYear();
+    const month = dateObject.getUTCMonth() + 1;
+    const day = dateObject.getUTCDate();
+
+    return `${year}-${month}-${day}`;
+  };
+
+  const handleFollow = async () => {
+    try {
+      await axios.post(`/user/${userId}/follow`);
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleUnFollow = async () => {
+    try {
+      await axios.post(`/user/${userId}/unfollow`);
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchFollowData = async () => {
+      try {
+        const response2 = await axios.get(`/user/find-followerr/${userId}`);
+        setCheckFollower(response2.data);
+        const response = await axios.get(`/user/find-follower/${userId}`);
+        setOtherUserInfo({ ...response.data });
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    if (userId) {
+      fetchFollowData();
+    }
+  }, [userId, checkFollower]);
+
+  if (Object.keys(otherUserInfo).length >= 1) {
+    return (
+      <ProfileInfoWrapper>
+        <ProfileEditWrapper>
+          <ProfileEditButton>프로필 편집</ProfileEditButton>
+        </ProfileEditWrapper>
+        <ProfileNmaeWrapper>
+          <ProfileNickname>{otherUserInfo.nickname}</ProfileNickname>
+          {checkFollower ? (
+            <FollowButton
+              onClick={() => {
+                handleUnFollow();
+              }}
+            >
+              팔로우 취소
+            </FollowButton>
+          ) : (
+            <FollowButton
+              onClick={() => {
+                handleFollow();
+              }}
+            >
+              팔로우
+            </FollowButton>
+          )}
+        </ProfileNmaeWrapper>
+        <ProfileName>김명재</ProfileName>
+        <ProfileJoinedWrapper>
+          <ProfileJoinedTitle>Joined</ProfileJoinedTitle>
+          <ProfileJoineDate>{handleDate(otherUserInfo)}</ProfileJoineDate>
+        </ProfileJoinedWrapper>
+        <FollowCountWrapper>
+          <FollowerWrapper>
+            <FollowerTitle>팔로워</FollowerTitle>
+            <FollowerCountNumber>
+              {otherUserInfo.Followers.length}
+            </FollowerCountNumber>
+          </FollowerWrapper>
+          <FollowingWrapper>
+            <FollowingTitle>팔로우</FollowingTitle>
+            <FolloiwngCountNumber>
+              {otherUserInfo.Followings.length}
+            </FolloiwngCountNumber>
+          </FollowingWrapper>
+        </FollowCountWrapper>
+      </ProfileInfoWrapper>
+    );
+  }
+  if (!Object.keys(otherUserInfo).length >= 1)
+    return (
+      <ProfileInfoWrapper>
+        <ProfileEditWrapper>
+          <ProfileEditButton>프로필 편집</ProfileEditButton>
+        </ProfileEditWrapper>
+        <ProfileNmaeWrapper>
+          <ProfileNickname>{userInfo.nickname}</ProfileNickname>
+        </ProfileNmaeWrapper>
+        <ProfileName>김명재</ProfileName>
+        <ProfileJoinedWrapper>
+          <ProfileJoinedTitle>Joined</ProfileJoinedTitle>
+          <ProfileJoineDate>{handleDate(userInfo)}</ProfileJoineDate>
+        </ProfileJoinedWrapper>
+        <FollowCountWrapper>
+          <FollowerWrapper>
+            <FollowerTitle>팔로워</FollowerTitle>
+            <FollowerCountNumber>{userInfo.follower}</FollowerCountNumber>
+          </FollowerWrapper>
+          <FollowingWrapper>
+            <FollowingTitle>팔로우</FollowingTitle>
+            <FolloiwngCountNumber>{userInfo.following}</FolloiwngCountNumber>
+          </FollowingWrapper>
+        </FollowCountWrapper>
+      </ProfileInfoWrapper>
+    );
 };
 
 export default ProfileInfoCp;
+
+//----팔로우 버튼
+export const FollowButton = styled.span`
+  font-size: 15px;
+  border-radius: 7px;
+  background-color: #f7dd07;
+  color: white;
+  margin-left: 10px;
+  padding: 7px 15px;
+  cursor: pointer;
+`;
+
+//-----
 
 export const ProfilePageWrapper = styled.div`
   flex: 1;
