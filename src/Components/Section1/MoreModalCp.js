@@ -1,15 +1,9 @@
-import React, { useRef } from "react";
+import React, { useRef, useImperativeHandle, forwardRef } from "react";
 import styled from "styled-components";
-import SidebarMenu from "../../StyledComponents/HomeStyle/Section1/SidebarMenu";
-import { useSetRecoilState } from "recoil";
-import ModalOpenAtom from "../../store/ModalOpenAtom";
 
-const MoreModalCp = () => {
-  const MoreModal = useRef();
-  const setMoreModalOpen = useSetRecoilState(ModalOpenAtom("moreModal"));
-
+const MoreModalCp = forwardRef((props, ref) => {
   return (
-    <MoreModalWrapper>
+    <MoreModalWrapper ref={ref}>
       <MoreOptionWrapper>
         <MoreOption>모드전환</MoreOption>
       </MoreOptionWrapper>
@@ -24,7 +18,7 @@ const MoreModalCp = () => {
       </MoreOptionWrapper>
     </MoreModalWrapper>
   );
-};
+});
 
 export default MoreModalCp;
 
