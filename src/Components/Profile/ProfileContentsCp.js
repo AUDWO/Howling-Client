@@ -5,18 +5,32 @@ import NoPostContentCp from "./NoPostContentCp";
 import axios from "axios";
 import ProfilePostsInfoCp from "./ProfilePostsInfoCp";
 import toggleValueAtom from "../../store/ToggleValueAtom";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { PostsInfoWrapper } from "./ProfileInfoCp";
 
 const ProfileContentsCp = ({ otherUserId, userInfo }) => {
   const [contents, setContents] = useState([]);
 
   const [contentsInfo, setContentsInfo] = useState({});
+
   const [postContentsOpen, setPostContentsOpen] = useRecoilState(
     toggleValueAtom("postContentsOpen")
   );
+
   const [diaryContentsOpen, setDiaryContentsOpen] = useRecoilState(
     toggleValueAtom("diaryContentsOpen")
   );
+
+  const contentsChange = useRecoilValue(toggleValueAtom("contentsChange"));
+
+  const handleUser = () => {
+    if (otherUserId) {
+      return otherUserId;
+    }
+    if (userInfo) {
+      return userInfo.id;
+    }
+  };
 
   const handleType = () => {
     if (postContentsOpen) {
@@ -27,47 +41,30 @@ const ProfileContentsCp = ({ otherUserId, userInfo }) => {
     }
   };
 
-  const handleUser = () => {
-    if (otherUserId) {
-      return otherUserId;
-    }
-    if (userInfo) {
-      console.log("userInfo잘 있음-profileContentsCp-handleUser");
-      return userInfo.id;
-    }
-  };
-
-  console.log("handleUser");
-  console.log(handleUser());
-  console.log("handleUser");
-
   useEffect(() => {
     if (!diaryContentsOpen) {
       setPostContentsOpen(true);
     }
+
     const fetchContentsData = async () => {
       try {
-        const contentsResponse = await axios.get(
-          `/page/render-posts/${handleUser()}`
-        );
-        setContents([...contentsResponse.data]);
+        if (postContentsOpen || diaryContentsOpen) {
+          const contentsResponse = await axios.get(
+            `/page/render-${handleType()}/${handleUser()}`
+          );
+          setContents([...contentsResponse.data]);
+        }
       } catch (error) {
         console.error(error);
       }
     };
-
-    if (contents.length >= 1) {
-      console.log("contents");
-      console.log(contents);
-      console.log("contents");
-    }
 
     const fetchContentsInfoData = async () => {
       try {
         const contentsInfoResponse = await axios.get(
           `/page/user-info/${otherUserId}`
         );
-        setContentsInfo({ ...contentsInfoResponse });
+        setContentsInfo({ ...contentsInfoResponse.data });
       } catch (error) {
         console.error(error);
       }
@@ -76,15 +73,10 @@ const ProfileContentsCp = ({ otherUserId, userInfo }) => {
       fetchContentsInfoData();
     }
     fetchContentsData();
-  }, []);
+  }, [postContentsOpen, diaryContentsOpen, contentsChange]);
 
-  if (contents.length >= 1) {
-    console.log("contents");
-    console.log(contents);
-    console.log("contents");
-  }
-
-  if (otherUserId && contents.length >= 1) {
+  if (otherUserId && Object.keys(contentsInfo).length >= 1) {
+    console.log("otherUserId-ProfileContentsCp");
     return (
       <>
         <ProfilePostsInfoCp contentsInfo={contentsInfo} />
