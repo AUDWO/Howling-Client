@@ -1,46 +1,44 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import styled, { css } from "styled-components";
 import toggleValueAtom from "../../store/ToggleValueAtom";
 
-const ProfilePostsInfoCp = () => {
-  const [postType, setPostType] = useRecoilState(toggleValueAtom("postType"));
-  const [diaryType, setDiaryType] = useRecoilState(
-    toggleValueAtom("diaryType")
+const ProfilePostsInfoCp = ({ contentsInfo }) => {
+  const [diaryContentsOpen, setDiaryContentsOpen] = useRecoilState(
+    toggleValueAtom("diaryContentsOpen")
   );
-
-  useEffect(() => {
-    setPostType(true);
-  }, []);
+  const [postContentsOpen, setPostContentsOpen] = useRecoilState(
+    toggleValueAtom("postContentsOpen")
+  );
 
   return (
     <PostsInfoWrapper>
       <CountWrapper>
         <CountTitle
-          type={postType}
+          type={postContentsOpen}
           onClick={() => {
-            setPostType(true);
-            setDiaryType(false);
+            setDiaryContentsOpen(false);
+            setPostContentsOpen(true);
           }}
         >
           게시물
         </CountTitle>
         <CountNumber marginL={"10"} paddingT={"10"}>
-          0
+          {contentsInfo.postslength}
         </CountNumber>
       </CountWrapper>
       <CountWrapper marginL={"50"}>
         <CountTitle
-          type={diaryType}
+          type={diaryContentsOpen}
           onClick={() => {
-            setPostType(false);
-            setDiaryType(true);
+            setPostContentsOpen(false);
+            setDiaryContentsOpen(true);
           }}
         >
           일기
         </CountTitle>
         <CountNumber marginL={"10"} paddingT={"10"}>
-          0
+          {contentsInfo.diarieslength}
         </CountNumber>
       </CountWrapper>
     </PostsInfoWrapper>
