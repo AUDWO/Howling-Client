@@ -1,149 +1,89 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled from "styled-components";
-import ProfileInfoCp from "./ProfileInfoCp";
-import ProfilePostsInfoCp from "./ProfilePostsInfoCp";
-import NoPostContentCp from "./NoPostContentCp";
 import { useRecoilValue } from "recoil";
-import toggleValueAtom from "../../store/ToggleValueAtom";
-import axios from "axios";
 import userInfoAtom from "../../store/userState/userAtom";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import ProfileImgCp from "./ProfileImgCp";
+import ProfileContentsCp from "./ProfileContentsCp";
+import ProfileContentConfigModalCp from "./ProfileContentConfig/ProfileContentsConfigModalCp";
 
-const ProfileCp = ({ userId }) => {
-  const postContentOpen = useRecoilValue(toggleValueAtom("postType"));
-  const diaryContentOpen = useRecoilValue(toggleValueAtom("diaryType"));
-
-  const [contents, setContents] = useState([]);
+const ProfileCp = ({ otherUserId }) => {
   const userInfo = useRecoilValue(userInfoAtom);
-
+  /*
   useEffect(() => {
+    if (!diaryContentsOpen) setPostContentsOpen(true);
+
     const handleType = () => {
-      if (postContentOpen) {
+      if (postContentsOpen) {
         return "posts";
       }
-      if (diaryContentOpen) {
+      if (diaryContentsOpen) {
         return "diaries";
       }
     };
 
     const handleUser = () => {
-      if (userId) {
-        return userId;
+      if (otherUserId) {
+        return otherUserId;
       }
-      if (!userId) {
+      if (!otherUserId) {
         return userInfo.id;
       }
     };
+
     const fetchContentsData = async () => {
       try {
-        const response = await axios.get(
-          `/page/render-${handleType()}/${handleUser()}`
-        );
-        setContents([...response.data]);
+        if (postContentOpen) {
+          const contentsResponse = await axios.get(
+            `/page/render-${handleType()}/${handleUser()}`
+          );
+          setContents([...contentsResponse.data]);
+
+       
+          setContentsOpen(true);
+        }
       } catch (error) {
         console.error(error);
       }
     };
+    if (otherUserId) {
+      fetchContentsData();
+    }
 
-    fetchContentsData();
-  }, [postContentOpen, diaryContentOpen]);
-  if (userId) {
+    if (!otherUserId) {
+      const fetchBasicContentData = async () => {
+        const response2 = await axios.get(
+          `/page/render-${handleType()}/${handleUser()}`
+        );
+        setContents([...response2.data]);
+        setContentsOpen(true);
+      };
+      fetchBasicContentData();
+    }
+  }, [otherUserId, postContentsOpen, diaryContentsOpen]);
+
+*/
+
+  if (otherUserId) {
     return (
-      <ProfilePageWrapper>
-        <ProfileWrapper>
-          <ProfileImg />
-          <ProfileInfoCp userId={userId} />
-        </ProfileWrapper>
-        <ProfilePostsInfoCp />
-        {contents.length >= 1 ? (
-          <>
-            <ContentsWrapper>
-              <ContentCardsWrapper>
-                {contents.map((content) => (
-                  <ContentCardWrapper>
-                    <ContentCard src={content.img} />
-                    <PublicOrNot>공개</PublicOrNot>
-                  </ContentCardWrapper>
-                ))}
-              </ContentCardsWrapper>
-            </ContentsWrapper>
-            <SpaceCp />
-          </>
-        ) : (
-          <>
-            {postContentOpen && (
-              <NoPostContentCp
-                title={"게시물 올리기"}
-                content={"게시물을 올리면 회원님의 프로필에 표시됩니다."}
-                subtitle={"게시물 올리기"}
-              />
-            )}
-            {diaryContentOpen && (
-              <NoPostContentCp
-                title={"일기 쓰기"}
-                content={"일기를 쓰면 회원님의 프로필에 표시됩니다."}
-                subtitle={"일기 쓰기"}
-              />
-            )}
-          </>
-        )}
-      </ProfilePageWrapper>
+      <>
+        <ProfilePageWrapper>
+          <ProfileImgCp otherUserId={otherUserId} />
+          <ProfileContentsCp otherUserId={otherUserId} />
+        </ProfilePageWrapper>
+      </>
     );
   }
 
-  if (!userId) {
+  if (userInfo) {
     return (
       <ProfilePageWrapper>
-        <ProfileWrapper>
-          <ProfileImg />
-          <ProfileInfoCp />
-        </ProfileWrapper>
-        <ProfilePostsInfoCp />
-        {contents.length >= 1 ? (
-          <>
-            <ContentsWrapper>
-              <ContentCardsWrapper>
-                {contents.map((content) => (
-                  <ContentCardWrapper>
-                    <ContentCard src={content.img} />
-                    <PublicOrNot>공개</PublicOrNot>
-                  </ContentCardWrapper>
-                ))}
-              </ContentCardsWrapper>
-            </ContentsWrapper>
-            <SpaceCp />
-          </>
-        ) : (
-          <>
-            {postContentOpen && (
-              <NoPostContentCp
-                title={"게시물 올리기"}
-                content={"게시물을 올리면 회원님의 프로필에 표시됩니다."}
-                subtitle={"게시물 올리기"}
-              />
-            )}
-            {diaryContentOpen && (
-              <NoPostContentCp
-                title={"일기 쓰기"}
-                content={"일기를 쓰면 회원님의 프로필에 표시됩니다."}
-                subtitle={"일기 쓰기"}
-              />
-            )}
-          </>
-        )}
+        <ProfileImgCp userInfo={userInfo} />
+        <ProfileContentsCp userInfo={userInfo} />
       </ProfilePageWrapper>
     );
   }
 };
-
-/**
- *  {contents.map((content) => (
-              <ContentCardWrapper>
-                <ContentCard />
-                <PublicOrNot>공개</PublicOrNot>
-              </ContentCardWrapper>
-            ))}
- * 
- */
 
 export default ProfileCp;
 
@@ -164,6 +104,7 @@ export const ProfileImg = styled.img`
   height: 150px;
   border-radius: 50%;
   background-color: black;
+  object-fit: cover;
 `;
 
 //------
@@ -198,12 +139,34 @@ export const ContentCard = styled.img`
   cursor: pointer;
 `;
 
+export const ContentDelete = styled(BsThreeDotsVertical)`
+  font-size: 30px;
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  opacity: 0;
+  border-radius: 50%;
+  color: #f7dd07;
+  background-color: rgba(128, 128, 128, 0.5);
+  cursor: pointer;
+  transition: all 0.1s;
+  padding: 4px;
+`;
+
+export const ContentControlModal = styled.div``;
+
 export const ContentCardWrapper = styled.div`
   position: relative;
   width: 350px;
   height: 350px;
   background-color: black;
   cursor: pointer;
+  transition: all 0.5s;
+  &:hover {
+    ${ContentDelete} {
+      opacity: 1;
+    }
+  }
 `;
 
 export const PublicOrNot = styled.span`
