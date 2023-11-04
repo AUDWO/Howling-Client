@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import ModalOpenAtom from "../../../store/ModalOpenAtom";
 
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
@@ -9,11 +9,17 @@ import PostContentConfigOption from "./PostContentConfigOption";
 import DiaryContentConfigOption from "./DiaryContentConfigOption";
 import contentInfoAtom from "../../../store/contentInfo/diaryContentInfoAtom";
 import axios from "axios";
+import toggleValueAtom from "../../../store/ToggleValueAtom";
+import stateUpdateAtom from "../../../store/stateUpdateAtom";
 
 const ProfileContentConfigModalCp = () => {
   const profileContentConfigModalBackground = useRef();
   const setContentConfigModalOpen = useSetRecoilState(
     ModalOpenAtom("profileContentConfigModal")
+  );
+
+  const [contentChange, setContentChange] = useRecoilState(
+    stateUpdateAtom("contentsChange")
   );
 
   const [diaryInfoOpen, setDiaryInfoOpen] = useState(false);
@@ -33,12 +39,15 @@ const ProfileContentConfigModalCp = () => {
 
   const handleDelete = async () => {
     if (diaryInfoOpen) {
-      await axios.delete(`/delete/diary/${contentInfo.id}`);
+      const response = await axios.delete(`/delete/diary/${contentInfo.id}`);
     }
 
     if (postInfoOpen) {
-      await axios.delete(`/delete/post/${contentInfo.id}`);
+      const response = await axios.delete(`/delete/post/${contentInfo.id}`);
+      setContentConfigModalOpen(false);
     }
+    setContentConfigModalOpen(false);
+    setContentChange(!contentChange);
   };
 
   if (diaryInfoOpen || postInfoOpen) {
@@ -67,12 +76,13 @@ const ProfileContentConfigModalCp = () => {
             )}
           </ProfileConfigListItem>
           <ProfileConfigListItem>
-            <ConfigTitleWrapper
-              onClick={() => {
-                handleDelete();
-              }}
-            >
-              <ConfigTitle color={"red"}>
+            <ConfigTitleWrapper>
+              <ConfigTitle
+                color={"red"}
+                onClick={() => {
+                  handleDelete();
+                }}
+              >
                 {diaryInfoOpen && "일기 삭제"}
                 {postInfoOpen && "게시물 삭제"}
               </ConfigTitle>
