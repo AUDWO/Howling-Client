@@ -1,31 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useSetRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
 import userInfoAtom from "../../store/userState/userAtom";
 import axios from "axios";
+import ModalOpenAtom from "../../store/ModalOpenAtom";
 
-const ProfileInfoCp = ({ userId }) => {
-  const userInfo = useRecoilValue(userInfoAtom);
-
-  const [a, setA] = useState("");
-  console.log("123456789");
-  console.log(userInfo);
-  console.log("123456789");
-  const [otherUserInfo, setOtherUserInfo] = useState({});
+const ProfileInfoCp = ({ otherUserInfo, userInfo }) => {
   const [checkFollower, setCheckFollower] = useState(false);
 
+  const setConfigModalOpen = useSetRecoilState(
+    ModalOpenAtom("profileConfigModal")
+  );
+
+  //날짜 변환 함수
   const handleDate = (obj) => {
     const dateObject = new Date(obj.createdAt);
     const year = dateObject.getUTCFullYear();
     const month = dateObject.getUTCMonth() + 1;
     const day = dateObject.getUTCDate();
-
     return `${year}-${month}-${day}`;
   };
 
   const handleFollow = async () => {
     try {
-      await axios.post(`/user/${userId}/follow`);
+      await axios.post(`/user/${otherUserInfo.id}/follow`);
       window.location.reload();
     } catch (error) {
       console.error(error);
@@ -34,7 +32,7 @@ const ProfileInfoCp = ({ userId }) => {
 
   const handleUnFollow = async () => {
     try {
-      await axios.post(`/user/${userId}/unfollow`);
+      await axios.post(`/user/${otherUserInfo.id}/unfollow`);
       window.location.reload();
     } catch (error) {
       console.error(error);
@@ -44,25 +42,23 @@ const ProfileInfoCp = ({ userId }) => {
   useEffect(() => {
     const fetchFollowData = async () => {
       try {
-        const response2 = await axios.get(`/user/find-followerr/${userId}`);
+        const response2 = await axios.get(
+          `/user/find-followerr/${otherUserInfo.id}`
+        );
         setCheckFollower(response2.data);
-        const response = await axios.get(`/user/find-follower/${userId}`);
-        setOtherUserInfo({ ...response.data });
       } catch (error) {
         console.error(error);
       }
     };
-    if (userId) {
+    if (otherUserInfo) {
       fetchFollowData();
     }
-  }, [userId, checkFollower]);
+  }, [otherUserInfo]);
 
-  if (Object.keys(otherUserInfo).length >= 1) {
+  if (otherUserInfo && Object.keys(otherUserInfo).length >= 3) {
+    console.log("otherUserInfo-ProfileInfoCp");
     return (
       <ProfileInfoWrapper>
-        <ProfileEditWrapper>
-          <ProfileEditButton>프로필 편집</ProfileEditButton>
-        </ProfileEditWrapper>
         <ProfileNmaeWrapper>
           <ProfileNickname>{otherUserInfo.nickname}</ProfileNickname>
           {checkFollower ? (
@@ -83,7 +79,7 @@ const ProfileInfoCp = ({ userId }) => {
             </FollowButton>
           )}
         </ProfileNmaeWrapper>
-        <ProfileName>김명재</ProfileName>
+        <ProfileName>{otherUserInfo.name}</ProfileName>
         <ProfileJoinedWrapper>
           <ProfileJoinedTitle>Joined</ProfileJoinedTitle>
           <ProfileJoineDate>{handleDate(otherUserInfo)}</ProfileJoineDate>
@@ -105,16 +101,23 @@ const ProfileInfoCp = ({ userId }) => {
       </ProfileInfoWrapper>
     );
   }
-  if (!Object.keys(otherUserInfo).length >= 1)
+
+  if (userInfo) {
     return (
       <ProfileInfoWrapper>
         <ProfileEditWrapper>
-          <ProfileEditButton>프로필 편집</ProfileEditButton>
+          <ProfileEditButton
+            onClick={() => {
+              setConfigModalOpen(true);
+            }}
+          >
+            프로필 편집
+          </ProfileEditButton>
         </ProfileEditWrapper>
         <ProfileNmaeWrapper>
           <ProfileNickname>{userInfo.nickname}</ProfileNickname>
         </ProfileNmaeWrapper>
-        <ProfileName>김명재</ProfileName>
+        <ProfileName>{userInfo.name}</ProfileName>
         <ProfileJoinedWrapper>
           <ProfileJoinedTitle>Joined</ProfileJoinedTitle>
           <ProfileJoineDate>{handleDate(userInfo)}</ProfileJoineDate>
@@ -131,6 +134,7 @@ const ProfileInfoCp = ({ userId }) => {
         </FollowCountWrapper>
       </ProfileInfoWrapper>
     );
+  }
 };
 
 export default ProfileInfoCp;
