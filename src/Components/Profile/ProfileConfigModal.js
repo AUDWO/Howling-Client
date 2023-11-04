@@ -8,14 +8,15 @@ import ModalOpenAtom from "../../store/ModalOpenAtom";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { MdOutlineKeyboardArrowUp } from "react-icons/md";
 import ProfilePasswordOption from "./ProfileConfigOptions/ProfilePasswordOption";
+import { useRecoilValue } from "recoil";
+import userInfoAtom from "../../store/userState/userAtom";
 import ProfileInfoCp from "./ProfileInfoCp";
 import ProfileInfoOption from "./ProfileConfigOptions/ProfileInfoOption";
 
 const ProfileConfigModal = () => {
   const profileConfigModalBackground = useRef();
-  const [userName, setUserName] = useState("김명재");
-  const [userNickname, setUserNickname] = useState("myeongjae_7053");
-  const [userEmail, setUserEmai] = useState("kmjstj3@naver.com");
+
+  const userInfo = useRecoilValue(userInfoAtom);
   const setConfigModalOpen = useSetRecoilState(
     ModalOpenAtom("profileConfigModal")
   );
@@ -53,7 +54,9 @@ const ProfileConfigModal = () => {
               />
             )}
           </ConfigTitleWrapper>
-          {profileSettingOption && <ProfileInfoSettingOption />}
+          {profileSettingOption && (
+            <ProfileInfoSettingOption userInfo={userInfo} />
+          )}
         </ProfileConfigListItem>
         <ProfileConfigListItem>
           <ConfigTitleWrapper>
@@ -95,24 +98,12 @@ const ProfileConfigModal = () => {
               />
             )}
           </ConfigTitleWrapper>
-          {userInfoOption && <ProfileInfoOption />}
+          {userInfoOption && <ProfileInfoOption userEmail={userInfo.email} />}
         </ProfileConfigListItem>
       </ProfileConfigWrapper>
     </ProfileConfigModalWrapper>
   );
 };
-
-/**
- *   <ConfigOptionWrapper height={"60px"}>
-              이메일
-              <Input
-                value={userName}
-                onChange={(e) => {
-                  setUserName(e.target.value);
-                }}
-              />
-            </ConfigOptionWrapper>
- */
 
 export default ProfileConfigModal;
 
