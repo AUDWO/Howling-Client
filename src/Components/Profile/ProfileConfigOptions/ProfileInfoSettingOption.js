@@ -3,32 +3,52 @@ import styled from "styled-components";
 import { BiSolidUser } from "react-icons/bi";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import axios from "axios";
+import { useRecoilState } from "recoil";
+import toggleValueAtom from "../../../store/ToggleValueAtom";
 
-const ProfileInfoSettingOption = () => {
-  const [profileImg, setProfileImg] = useState("");
-  const [userName, setUserName] = useState("김명재");
-  const [userNickname, setUserNickname] = useState("myeongjae_7053");
+const ProfileInfoSettingOption = ({ userInfo }) => {
+  const [profileImg, setProfileImg] = useState(userInfo.img);
+  const [newProfileImg, setNewProfileImg] = useState(null);
+  const [userName, setUserName] = useState(userInfo.name);
+  const [userNickname, setUserNickname] = useState(userInfo.nickname);
+  const [userInfoChange, setUserInfoChange] = useRecoilState(
+    toggleValueAtom("userInfoChange")
+  );
+
+  console.log("userInfoChange");
+  console.log(userInfoChange);
+  console.log("userInfoChange");
 
   const formData = new FormData();
-  formData.append("img", profileImg);
+  if (newProfileImg) {
+    formData.append("img", newProfileImg);
+  }
 
   function handleImgSelect(e) {
     e.preventDefault();
     const selectedImg = e.target.files[0];
     if (selectedImg && selectedImg.type.startsWith("image/")) {
-      setProfileImg(selectedImg);
+      setNewProfileImg(selectedImg);
     }
   }
 
   const handlePost = async () => {
     try {
-      const imgData = await axios.post("/post/profile-img", formData);
+      if (newProfileImg) {
+        const imgData = await axios.post("/post/profile-img", formData);
+        const response = await axios.patch("/update/user/profile-info", {
+          img: imgData.data.url,
+          nickname: userNickname,
+          name: userName,
+        });
+      }
 
-      const response = await axios.patch("/update/user/profile-info", {
-        img: imgData.data.url,
-        nickname: userNickname,
-        name: userName,
-      });
+      if (!newProfileImg) {
+        const response = await axios.patch("/update/user/profile-info", {
+          nickname: userNickname,
+          name: userName,
+        });
+      }
     } catch (error) {
       console.error(error);
     }
@@ -59,7 +79,11 @@ const ProfileInfoSettingOption = () => {
       <ConfigImgOptionWrapper height={"auto"}>
         <ProfileImgWrapper>
           {profileImg ? (
-            <ProfileImg src={URL.createObjectURL(profileImg)} />
+            <ProfileImg
+              src={
+                newProfileImg ? URL.createObjectURL(newProfileImg) : profileImg
+              }
+            />
           ) : (
             <BasicProfileImgIcon />
           )}
@@ -78,7 +102,14 @@ const ProfileInfoSettingOption = () => {
         </ProfileImgSelectButtonWrapper>
       </ConfigImgOptionWrapper>
       <PostButtonWrapper>
-        <PostButton onClick={handlePost()}>저장하기</PostButton>
+        <PostButton
+          onClick={() => {
+            handlePost();
+            setUserInfoChange(!userInfoChange);
+          }}
+        >
+          저장하기
+        </PostButton>
       </PostButtonWrapper>
     </ConfigWrapper>
   );
