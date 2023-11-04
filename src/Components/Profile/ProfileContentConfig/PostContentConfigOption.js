@@ -1,6 +1,9 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
+import ModalOpenAtom from "../../../store/ModalOpenAtom";
+import stateUpdateAtom from "../../../store/stateUpdateAtom";
 
 const PostContentConfigOption = ({ contentInfo }) => {
   const [postTitle, setPostTitle] = useState(contentInfo.title);
@@ -12,9 +15,29 @@ const PostContentConfigOption = ({ contentInfo }) => {
     contentInfo.commentControl
   );
 
+  //프로필 컨텐츠 설정 모달창 닫기 함수
+  const setContentConfigModalOpen = useSetRecoilState(
+    ModalOpenAtom("profileContentConfigModal")
+  );
+
+  //프로필 컨텐츠 정보 변경 후 업데이트 된 contents 받아오기
+  const [contentChange, setContentChange] = useRecoilState(
+    stateUpdateAtom("contentsChange")
+  );
+
   const handleChangePostInfo = async () => {
     try {
-      await axios.patch(`/update/post/${contentInfo.id}`);
+      const response = await axios.patch(
+        `/update/post-info/${contentInfo.id}`,
+        {
+          title: postTitle,
+          content: postContent,
+          likeControl: toggleLikeValue,
+          commentControl: toggleCommentValue,
+        }
+      );
+      setContentConfigModalOpen(false);
+      setContentChange(!contentChange);
     } catch (error) {
       console.error(error);
     }
