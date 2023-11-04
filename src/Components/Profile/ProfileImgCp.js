@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import ProfileInfoCp from "./ProfileInfoCp";
 import axios from "axios";
+import { GiConsoleController } from "react-icons/gi";
 
 const ProfileImgCp = ({ userInfo, otherUserId }) => {
-  const [otherUserInfo, setOtherUserInfo] = useState(null);
+  const [otherUserInfo, setOtherUserInfo] = useState({});
+
   useEffect(() => {
     const fetchOtherUserInfoData = async () => {
       try {
@@ -21,7 +23,7 @@ const ProfileImgCp = ({ userInfo, otherUserId }) => {
     if (otherUserId) {
       fetchOtherUserInfoData();
     }
-  }, []);
+  }, [otherUserId]);
 
   if (userInfo) {
     return (
@@ -32,11 +34,14 @@ const ProfileImgCp = ({ userInfo, otherUserId }) => {
     );
   }
 
-  if (otherUserId && Object.keys(otherUserInfo).length >= 1) {
-    <ProfileWrapper>
-      <ProfileImg src={otherUserInfo.img} />
-      <ProfileInfoCp otherUserInfo={otherUserInfo} />
-    </ProfileWrapper>;
+  if (otherUserId && Object.keys(otherUserInfo).length >= 2) {
+    console.log("otherUserId-ProfileImgCp");
+    return (
+      <ProfileWrapper>
+        <ProfileImg src={otherUserInfo.img} />
+        <ProfileInfoCp otherUserInfo={otherUserInfo} />
+      </ProfileWrapper>
+    );
   }
 };
 
