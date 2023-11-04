@@ -5,8 +5,14 @@ import NoPostContentCp from "./NoPostContentCp";
 import axios from "axios";
 import ProfilePostsInfoCp from "./ProfilePostsInfoCp";
 import toggleValueAtom from "../../store/ToggleValueAtom";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { PostsInfoWrapper } from "./ProfileInfoCp";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import contentInfoAtom from "../../store/contentInfo/diaryContentInfoAtom";
+import ModalOpenAtom from "../../store/ModalOpenAtom";
+
+//Icon
+import { FaLock } from "react-icons/fa";
+import { FaLockOpen } from "react-icons/fa";
+import stateUpdateAtom from "../../store/stateUpdateAtom";
 
 const ProfileContentsCp = ({ otherUserId, userInfo }) => {
   const [contents, setContents] = useState([]);
@@ -16,12 +22,21 @@ const ProfileContentsCp = ({ otherUserId, userInfo }) => {
   const [postContentsOpen, setPostContentsOpen] = useRecoilState(
     toggleValueAtom("postContentsOpen")
   );
-
   const [diaryContentsOpen, setDiaryContentsOpen] = useRecoilState(
     toggleValueAtom("diaryContentsOpen")
   );
 
-  const contentsChange = useRecoilValue(toggleValueAtom("contentsChange"));
+  const setContentConfigModalOpen = useSetRecoilState(
+    ModalOpenAtom("profileContentConfigModal")
+  );
+
+  const [contentLender, setContentLender] = useRecoilState(
+    toggleValueAtom("contentLender")
+  );
+
+  const setContentInfo = useSetRecoilState(contentInfoAtom);
+
+  const contentsChange = useRecoilValue(stateUpdateAtom("contentsChange"));
 
   const handleUser = () => {
     if (otherUserId) {
@@ -53,6 +68,7 @@ const ProfileContentsCp = ({ otherUserId, userInfo }) => {
             `/page/render-${handleType()}/${handleUser()}`
           );
           setContents([...contentsResponse.data]);
+          setContentLender(true);
         }
       } catch (error) {
         console.error(error);
@@ -76,7 +92,6 @@ const ProfileContentsCp = ({ otherUserId, userInfo }) => {
   }, [postContentsOpen, diaryContentsOpen, contentsChange]);
 
   if (otherUserId && Object.keys(contentsInfo).length >= 1) {
-    console.log("otherUserId-ProfileContentsCp");
     return (
       <>
         <ProfilePostsInfoCp contentsInfo={contentsInfo} />
@@ -87,8 +102,6 @@ const ProfileContentsCp = ({ otherUserId, userInfo }) => {
                 {contents.map((content) => (
                   <ContentCardWrapper>
                     <ContentCard src={content.img} />
-                    {diaryContentsOpen && <PublicOrNot>공개</PublicOrNot>}
-                    <ContentDelete />
                   </ContentCardWrapper>
                 ))}
               </ContentCardsWrapper>
@@ -117,7 +130,7 @@ const ProfileContentsCp = ({ otherUserId, userInfo }) => {
     );
   }
 
-  if (userInfo && contents.length >= 1) {
+  if (userInfo && contentLender) {
     return (
       <>
         <ProfilePostsInfoCp contentsInfo={userInfo} />
@@ -127,9 +140,31 @@ const ProfileContentsCp = ({ otherUserId, userInfo }) => {
               <ContentCardsWrapper>
                 {contents.map((content) => (
                   <ContentCardWrapper>
-                    <ContentCard src={content.img} />
-                    {diaryContentsOpen && <PublicOrNot>공개</PublicOrNot>}
-                    <ContentDelete />
+                    {content.img ? (
+                      <ContentCard src={content.img} />
+                    ) : (
+                      <ContentCardNoImg>Diary</ContentCardNoImg>
+                    )}
+                    {diaryContentsOpen && (
+                      <>
+                        {content.publicCheck ? (
+                          <DiaryPublicOnIcon />
+                        ) : (
+                          <DiaryPublicOffIcon />
+                        )}
+                      </>
+                    )}
+                    <ContentDelete
+                      onClick={() => {
+                        setContentConfigModalOpen(true);
+                        if (diaryContentsOpen) {
+                          setContentInfo({ ...content, type: "diary" });
+                        }
+                        if (postContentsOpen) {
+                          setContentInfo({ ...content, type: "post" });
+                        }
+                      }}
+                    />
                   </ContentCardWrapper>
                 ))}
               </ContentCardsWrapper>
@@ -161,6 +196,22 @@ const ProfileContentsCp = ({ otherUserId, userInfo }) => {
 
 export default ProfileContentsCp;
 
+//Icon
+
+export const DiaryPublicOnIcon = styled(FaLockOpen)`
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 25px;
+`;
+
+export const DiaryPublicOffIcon = styled(FaLock)`
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 25px;
+`;
+
 export const ContentsWrapper = styled.div`
   border: 1px solid black;
   width: 100%;
@@ -184,6 +235,20 @@ export const ContentCard = styled.img`
   background-color: black;
   object-fit: cover;
   cursor: pointer;
+`;
+
+export const ContentCardNoImg = styled.div`
+  width: 350px;
+  height: 350px;
+  background-color: #f7dd07;
+  color: black;
+  object-fit: cover;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 90px;
+  font-weight: 700;
 `;
 
 export const ContentDelete = styled(BsThreeDotsVertical)`
@@ -217,17 +282,4 @@ export const ContentCardWrapper = styled.div`
 export const SpaceCp = styled.div`
   width: 100px;
   height: 100px;
-`;
-
-export const PublicOrNot = styled.span`
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  border: 3px solid #f7dd07;
-  border-radius: 10px;
-  color: #f7dd07;
-  font-size: 15px;
-  font-weight: 500;
-  padding: 5px 10px 5px 10px;
-  background-color: black;
 `;
