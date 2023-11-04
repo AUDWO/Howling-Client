@@ -1,34 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import { BiSolidUser } from "react-icons/bi";
 import { AiOutlinePlusCircle } from "react-icons/ai";
-import axios from "axios";
 
-const ProfileInfoOption = () => {
-  const [existingPassword, setExistingPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [checkNewPassword, setCheckNewPassword] = useState("");
-
-  /*
-  const handlePost = async () => {
-    try {
-      const imgData = await axios.post("/post/profile-img", formData);
-
-      const response = await axios.patch("/update/user/profile-info", {
-        img: imgData.data.url,
-        nickname: userNickname,
-        name: userName,
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };*/
-
+const ProfileInfoOption = ({ userEmail }) => {
   return (
     <ConfigWrapper>
       <ConfigOptionWrapper height={"auto"} flexD={"column"}>
         <ConfigOptionTitle marginT={"15"}>이메일</ConfigOptionTitle>
-        <Email marginT={"15"}>kmjstj3@naver.com</Email>
+        <Email marginT={"15"}>{userEmail}</Email>
       </ConfigOptionWrapper>
       <PostButtonWrapper>
         <PostButton onClick={() => {}}>닫기</PostButton>
