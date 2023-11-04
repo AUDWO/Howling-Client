@@ -4,46 +4,62 @@ import axios from "axios";
 
 import MakePostDragDownImgCp from "./MakePostDragDownImgCp";
 import PostAdvancedSetupCp from "./PostAdvancedSetupCp";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import postImgAtom from "../../store/PostImgAtom";
+import {
+  useRecoilSnapshot,
+  useRecoilState,
+  useRecoilValue,
+  useSetRecoilState,
+} from "recoil";
 import ModalOpenAtom from "../../store/ModalOpenAtom";
+import toggleValueAtom from "../../store/ToggleValueAtom";
+import imgUrlAtom from "../../store/imgUrlAtom";
+import userInfoAtom from "../../store/userState/userAtom";
+import stateUpdateAtom from "../../store/stateUpdateAtom";
 
 const MakePostModalCp = () => {
   const setMakePostModalOpen = useSetRecoilState(
     ModalOpenAtom("makePostModal")
   );
 
-  const imgUrl = useRecoilValue(postImgAtom);
+  const postimgUrl = useRecoilValue(imgUrlAtom("postImg"));
   const postModalBackground = useRef();
-  const [textCheck, setTextCheck] = useState(true);
-  const [text, setText] = useState(null);
+  const [content, setContent] = useState(null);
   const [title, setTitle] = useState(null);
-  const [likeCountControl, setLikeCountControl] = useState(true);
-  const [commentControl, setCommentControl] = useState(true);
-  const [contentControl, setContentControl] = useState(true);
+  const likeCountControl = useRecoilValue(toggleValueAtom("postLikeCount"));
+  const commentControl = useRecoilValue(toggleValueAtom("postCommentForbid"));
+  const contentControl = useRecoilValue(toggleValueAtom("postContent"));
+  const [postUpdate, setPostUpdate] = useRecoilState(stateUpdateAtom("post"));
+
+  const userInfo = useRecoilValue(userInfoAtom);
 
   const formData = new FormData();
-  formData.append("img", imgUrl);
+  formData.append("img", postimgUrl);
 
-  const postImgUpload = async (e) => {
-    e.preventDefault();
+  //
 
-    if (imgUrl && formData) {
-      const response = await axios.post(
-        "http://localhost:8005/post/img",
-        formData
-      );
-
-      await axios.post("http://localhost:8005/post", {
-        url: response.data.url,
-        content: text,
+  const handlePost = async () => {
+    if (!postimgUrl) {
+      return;
+    }
+    try {
+      const imgDataResponse = await axios.post("/post/img", formData);
+      console.log(imgDataResponse);
+      console.log("imgDataResponse");
+      const postResponse = await axios.post("/post", {
+        url: imgDataResponse.data.url,
+        content: content,
         title: title,
         likeCountControl: likeCountControl,
-        commentControl: commentControl,
-        contentControl: contentControl,
+        commentControl: !commentControl,
+        contentControl: !contentControl,
         likeCount: 0,
         commentCount: 0,
       });
+
+      setPostUpdate(!postUpdate);
+      setMakePostModalOpen(false);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -58,8 +74,8 @@ const MakePostModalCp = () => {
     >
       <MakePostWrapper>
         <MakePostProfileWrapper>
-          <MakePostProfileImg></MakePostProfileImg>
-          <MakePostNickname>myeongjae_7053</MakePostNickname>
+          <MakePostProfileImg>{userInfo.profileImg}</MakePostProfileImg>
+          <MakePostNickname>{userInfo.nickname}</MakePostNickname>
         </MakePostProfileWrapper>
         <MakePostDragDownImgCp />
         <div>
@@ -71,13 +87,13 @@ const MakePostModalCp = () => {
             }}
           />
         </div>
-        {textCheck && (
+        {!contentControl && (
           <MakePostContentWrapper>
             <MakePostContent
               placeholder="내용을 입력하세요!"
-              value={text}
+              value={content}
               onChange={(e) => {
-                setText(e.target.value);
+                setContent(e.target.value);
               }}
             />
           </MakePostContentWrapper>
@@ -85,13 +101,21 @@ const MakePostModalCp = () => {
         <MakePostOptionWrapper>
           <PostAdvancedSetupCp />
         </MakePostOptionWrapper>
-        <MakePostFormWrapper
-          onSubmit={(e) => {
-            postImgUpload(e);
-          }}
-        >
-          <MakePostButton type="submit">게시하기</MakePostButton>
-          <MakePostCancelButton>삭제하기</MakePostCancelButton>
+        <MakePostFormWrapper>
+          <MakePostButton
+            onClick={() => {
+              handlePost();
+            }}
+          >
+            게시하기
+          </MakePostButton>
+          <MakePostCancelButton
+            onClick={() => {
+              setMakePostModalOpen(false);
+            }}
+          >
+            삭제하기
+          </MakePostCancelButton>
         </MakePostFormWrapper>
         <div>
           <EmptySpace></EmptySpace>
@@ -117,7 +141,7 @@ export const MakePostOptionWrapper = styled.div`
 
 export const EmptySpace = styled.div`
   width: 200px;
-  height: 100px;
+  height: 70px;
 `;
 
 export const MakePostTitle = styled.input`
@@ -213,6 +237,7 @@ export const MakePostProfileImg = styled.img`
   width: 50px;
   height: 50px;
   margin-right: 15px;
+  object-fit: cover;
 `;
 
 export const MakePostNickname = styled.div`
@@ -232,7 +257,7 @@ export const MakePostContent = styled.textarea`
 `;
 
 export const MakePostFormWrapper = styled.form`
-  margin-top: 70px;
+  margin-top: 40px;
   display: flex;
   justify-content: space-around;
 `;
