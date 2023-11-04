@@ -1,12 +1,36 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import axios from "axios";
+import { useSetRecoilState } from "recoil";
+import ModalOpenAtom from "../../../store/ModalOpenAtom";
 
-const DiaryContentConfigOption = () => {
+const DiaryContentConfigOption = ({ contentInfo }) => {
   const [likeCheck, setLikeCheck] = useState(false);
   const [commentCheck, setCommentCheck] = useState(false);
   const [togglePublicValue, setTogglePublicValue] = useState(false);
   const [toggleLikeValue, setToggleLikeValue] = useState(false);
   const [toggleCommentValue, setToggleCommentValue] = useState(false);
+
+  const setContentConfigModalOpen = useSetRecoilState(
+    ModalOpenAtom("profileContentConfigModal")
+  );
+
+  const handleChangeDiaryInfo = async () => {
+    try {
+      const response = await axios.patch(
+        `/update/diary-info/${contentInfo.id}`,
+        {
+          public: togglePublicValue,
+          likeCheck: toggleLikeValue,
+          commentCheck: toggleCommentValue,
+        }
+      );
+
+      setContentConfigModalOpen(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <ConfigWrapper>
@@ -79,7 +103,13 @@ const DiaryContentConfigOption = () => {
         </>
       )}
       <PostButtonWrapper>
-        <PostButton onClick={() => {}}>저장하기</PostButton>
+        <PostButton
+          onClick={() => {
+            handleChangeDiaryInfo();
+          }}
+        >
+          저장하기
+        </PostButton>
       </PostButtonWrapper>
     </ConfigWrapper>
   );
