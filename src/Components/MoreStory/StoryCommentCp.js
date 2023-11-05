@@ -3,6 +3,9 @@ import styled from "styled-components";
 
 import { BiSolidDownArrow } from "react-icons/bi";
 import { BiSolidUpArrow } from "react-icons/bi";
+
+import { BsThreeDots } from "react-icons/bs";
+
 import axios from "axios";
 import {
   MoreStoryComment,
@@ -14,16 +17,27 @@ import {
   CommentContactIcon,
   CommentContactReply,
   CommentContent,
+  ProfileNameWrapper,
+  CommentMoreIcon,
 } from "../../StyledComponents/MoreStoryStyle/MoreStoryCommentCpSt";
-import StoryReplyCommentCp from "./StoryReplyCommentCp";
 
-const StoryCommentCp = ({ comment }) => {
+import StoryReplyCommentCp from "./StoryReplyCommentCp";
+import PostCommentConfigModalCp from "../Post/PostCommentConfigModalCp";
+import { useRecoilState } from "recoil";
+import ModalOpenAtom from "../../store/ModalOpenAtom";
+
+const StoryCommentCp = ({ comment, type }) => {
   const [replyOpen, setReplyOpen] = useState(false);
   const [reply, setReply] = useState(null);
   const [replies, setReplies] = useState([]);
   const [replyUpdate, setReplyUpdate] = useState(false);
   const [replyInputOpen, setReplyInputOpen] = useState(false);
 
+  const [commentConfigModalOpen, setCommentConfigModalOpen] = useRecoilState(
+    ModalOpenAtom(`${type}CommentConfigModal${comment.id}`)
+  );
+
+  //대댓글 api
   const handlePostStoryReplyComment = async () => {
     try {
       await axios.post("/comment/story", {
@@ -35,6 +49,20 @@ const StoryCommentCp = ({ comment }) => {
       console.error(error);
     }
   };
+
+  const handlePostDiaryReplyComment = async () => {
+    try {
+      await axios.post("/comment/diary", {
+        content: reply,
+        DiaryCommentId: comment.id,
+        DiaryId: comment.diaryId,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  //대댓글 api
 
   useEffect(() => {
     const fetchStoryReplyComment = async () => {
@@ -49,7 +77,23 @@ const StoryCommentCp = ({ comment }) => {
       }
     };
 
-    fetchStoryReplyComment();
+    const fetchDiaryReplyComment = async () => {
+      try {
+        const response = await axios.get(
+          `/page/render-diary-replycomments/${comment.id}`
+        );
+
+        setReplies([...response.data]);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    if (type === "story") {
+      fetchStoryReplyComment();
+    }
+    if (type === "diary") {
+      fetchDiaryReplyComment();
+    }
   }, [replyUpdate]);
 
   return (
@@ -58,7 +102,24 @@ const StoryCommentCp = ({ comment }) => {
         <MoreStoryCommentProfile></MoreStoryCommentProfile>
       </ProfileWrapper>
       <CommentWrapper>
-        <ProfileName>{comment.User.nickname}</ProfileName>
+        <ProfileNameWrapper>
+          <ProfileName>{comment.User.nickname}</ProfileName>
+          <StoryCommentConfigIcon
+            onClick={() => {
+              setTimeout(() => {
+                setCommentConfigModalOpen(true);
+              }, 0);
+            }}
+          />
+          {commentConfigModalOpen && (
+            <PostCommentConfigModalCp
+              type={type}
+              top={"0"}
+              right={"0"}
+              comment={comment}
+            />
+          )}
+        </ProfileNameWrapper>
         <CommentContent>{comment.content}</CommentContent>
         <CommentContact>
           <CommentContactIcon />
@@ -90,7 +151,12 @@ const StoryCommentCp = ({ comment }) => {
               <CommentReplyInputButton
                 replyCheck={reply}
                 onClick={() => {
-                  handlePostStoryReplyComment();
+                  if (type === "diary") {
+                    handlePostDiaryReplyComment();
+                  }
+                  if (type === "story") {
+                    handlePostStoryReplyComment();
+                  }
                   setReplyUpdate(!replyUpdate);
                   setReply("");
                 }}
@@ -127,7 +193,30 @@ const StoryCommentCp = ({ comment }) => {
 
 export default StoryCommentCp;
 
+/*
+
+ {storyCommentConfigModalOpen && (
+            <PostCommentConfigModalCp
+              type={"story"}
+              commentId={comment.id}
+              top={"0"}
+              right={"0"}
+            />
+          )}
+ */
+
 //----수정
+
+//----configIcon
+
+export const StoryCommentConfigIcon = styled(BsThreeDots)`
+  font-size: 20px;
+  color: gray;
+  &:hover {
+    color: black;
+  }
+  cursor: pointer;
+`;
 
 //--
 
